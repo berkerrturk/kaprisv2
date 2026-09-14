@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.tmp-node/
+.tmp-node.zip
+.tmp-mingit/
+.tmp-mingit.zip
+*.tsbuildinfo

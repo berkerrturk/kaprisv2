@@ -2,7 +2,16 @@
 
 ## Durum
 
-Teknoloji yığını henüz seçilmedi. Bu dosya karar kaydı olarak güncellenecektir.
+Frontend başlangıç teknolojileri seçildi. Diğer teknoloji kararları ilerleyen
+görevlerde bu dosyaya eklenecektir.
+
+## Frontend kararı
+
+- **Vue 3:** Bileşen tabanlı, küçük başlayıp büyümeye uygun kullanıcı arayüzü.
+- **TypeScript:** Arayüz ve veri modellerinde erken hata yakalama.
+- **Vite:** Hızlı yerel geliştirme ve basit üretim derlemesi.
+
+Bu seçim, ilk web MVP iskeletini düşük karmaşıklıkla çalıştırmak için yapılmıştır.
 
 ## Gereksinimler
 

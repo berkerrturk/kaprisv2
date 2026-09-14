@@ -21,6 +21,28 @@
 
 Ad, açıklama, kategori, mağaza, stok kodu, ayar, altın rengi, gramaj/aralık, taşlar, ölçüler, stil, kullanım amacı, sertifika, teslim süresi ve yayın durumu.
 
+## MVP kategorileri
+
+- Yüzük (`ring`)
+- Bileklik (`bracelet`)
+- Bilezik (`bangle`)
+- Kolye (`necklace`)
+- Küpe (`earring`)
+
+Bileklik ve bilezik ayrı kategorilerdir. Kategori kodları veri alanlarında sabit,
+kullanıcıya gösterilen Türkçe adlar ise sunum katmanında tutulur.
+
+## Ürün bulucu cevap sırası
+
+`DiscoveryAnswer` kayıtları aşağıdaki adım sırasını korur:
+
+1. Altın ayarı (`goldKarat`)
+2. Stil (`style`)
+3. Minimum ve maksimum bütçe (`minBudgetMinor`, `maxBudgetMinor`)
+
+Bütçe değerleri para biriminin en küçük biriminde tam sayı olarak saklanmalıdır.
+MVP'de `goldKarat` değeri `8`, `14`, `18` veya `22` olabilir.
+
 ## Modelleme ilkeleri
 
 - Stok ve fiyat mağaza/variant seviyesinde tutulmalı.

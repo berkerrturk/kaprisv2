@@ -2,9 +2,10 @@
 
 ## Dahil
 
-- Kategori seçimi
+- Yüzük, bileklik, bilezik, kolye ve küpe kategori seçimi
 - Kategoriye özgü soru akışları
-- Bütçe, ayar, renk, taş, stil ve ölçü filtreleri
+- Altın ayarı → stil → bütçe aralığı sıralı temel soru akışı
+- İlerleyen adımlarda kategoriye göre renk, taş ve ölçü filtreleri
 - Çoklu mağaza kataloğu
 - Ürün ve stok yönetimi
 - Sonuç sıralama ve yakın alternatifler

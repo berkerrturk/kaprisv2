@@ -6,15 +6,15 @@ Kodlamadan önce MVP'nin sınırlarını ve ilk veri modelini kesinleştirmek; a
 
 ## Görevler
 
-- [ ] MVP kategorilerini seç
+- [x] MVP kategorilerini seç
 - [ ] Her kategori için filtre/özellik listesini çıkar
 - [ ] Örnek 20–50 ürünü standart forma dönüştür
 - [ ] Satış mı talep toplama mı kararını ver
 - [ ] Teknoloji alternatiflerini değerlendir ve karar kaydı oluştur
 - [ ] Veri tabanı şemasını tasarla
 - [ ] Ana sayfa, soru akışı, sonuç ve ürün detayı wireframe'lerini hazırla
-- [ ] Proje iskeletini oluştur
-- [ ] Test, lint ve format kontrollerini kur
+- [x] Proje iskeletini oluştur
+- [x] Test, lint ve format kontrollerini kur
 - [ ] Örnek verilerle ilk dikey akışı çalıştır
 
 ## Sprint çıktısı

@@ -2,7 +2,7 @@
 
 ## Ürün bulma
 
-Ana sayfa → kategori → yönlendirici sorular → sonuçlar → ürün detayı → favori/iletişim.
+Ana sayfa → kategori → altın ayarı → stil → bütçe aralığı → sonuçlar → ürün detayı → favori/iletişim.
 
 ## Sonuç bulunamadı
 

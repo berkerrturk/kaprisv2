@@ -1,0 +1,9 @@
+.git/
+node_modules/
+dist/
+.tmp-node/
+package-lock.json
+AGENTS.md
+README.md
+docs/
+tasks/

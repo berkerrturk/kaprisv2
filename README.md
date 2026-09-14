@@ -17,8 +17,8 @@ Müşteriler çok sayıdaki takı arasında doğru ürünü bulmakta, teknik öz
 
 ## Temel müşteri yolculuğu
 
-1. Müşteri yüzük, bileklik, kolye veya küpe gibi bir kategori seçer.
-2. Bütçe, altın ayarı, altın rengi, taş, stil, ölçü ve kullanım amacı sorularını yanıtlar.
+1. Müşteri yüzük, bileklik, bilezik, kolye veya küpe kategorilerinden birini seçer.
+2. Önce altın ayarı, sonra stil ve en son bütçe aralığı sorularını yanıtlar.
 3. Sistem kendi mağazamız ve partner mağazalardaki uygun stok ürünlerini sunar.
 4. Müşteri ürünü inceler, filtreleri değiştirir veya alternatiflere bakar.
 5. Aradığını bulamazsa özel tasarım talebi bırakır.
@@ -105,6 +105,7 @@ Referanslar kopyalanmayacak; başarılı deneyim prensipleri Kapris V2'ye uyarla
 - [Teknik mimari](docs/07-technical-architecture.md)
 - [AI, CAD, 3D ve AR stratejisi](docs/08-ai-cad-3d-ar-strategy.md)
 - [Açık sorular](docs/09-open-questions.md)
+- [Ürün bulucu soru akışı](docs/11-discovery-flow.md)
 - [İlk sprint](tasks/first-sprint.md)
 - [Backlog](tasks/backlog.md)
 
