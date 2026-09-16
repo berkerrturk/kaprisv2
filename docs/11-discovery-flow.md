@@ -24,3 +24,8 @@ Stil seçenekleri henüz ürün kararı olmadığı için serbest giriş olarak 
 Kesin seçenekler belirlendiğinde aynı akış seçim kartlarına dönüştürülecektir.
 Bütçe sabit fiyat dilimleri yerine minimum ve maksimum Türk lirası alanlarıyla
 alınır.
+
+Soru akışı tamamlandığında seçilen ölçütler özetlenir. Katalog verisi henüz
+eklenmediği için bu ekran ürün eşleşmesi varmış gibi davranmaz. Bütçeler negatif
+olmayan tam Türk lirası olarak doğrulanır; katalog bağlandığında para değerleri
+veri modelindeki en küçük birime dönüştürülür.

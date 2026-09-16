@@ -37,7 +37,7 @@ function selectCategory(category: Category) {
   <main id="ana-sayfa" class="page-content">
     <section class="hero" aria-labelledby="page-title">
       <p class="eyebrow">Kapris V2</p>
-      <h1 id="page-title">Hello World</h1>
+      <h1 id="page-title">Sana uygun takıyı bul</h1>
       <p class="hero-copy">Aradığın takıyı seçerek keşfetmeye başla.</p>
     </section>
 

@@ -15,19 +15,27 @@ const answers = reactive({
   maxBudget: '',
 })
 
+function parseBudget(value: string | number): number | null {
+  const text = String(value).trim()
+  if (!/^\d+$/.test(text)) return null
+  const amount = Number(text)
+  return Number.isSafeInteger(amount) ? amount : null
+}
+
+const budgetFormatter = new Intl.NumberFormat('tr-TR', {
+  style: 'currency',
+  currency: 'TRY',
+  maximumFractionDigits: 0,
+})
+
 const canContinue = computed(() => {
   if (currentStep.value === 0) return answers.goldKarat !== null
   if (currentStep.value === 1) return answers.style.trim().length > 0
 
-  const minBudget = Number(answers.minBudget)
-  const maxBudget = Number(answers.maxBudget)
+  const minBudget = parseBudget(answers.minBudget)
+  const maxBudget = parseBudget(answers.maxBudget)
 
-  return (
-    answers.minBudget !== '' &&
-    answers.maxBudget !== '' &&
-    minBudget >= 0 &&
-    maxBudget >= minBudget
-  )
+  return minBudget !== null && maxBudget !== null && maxBudget >= minBudget
 })
 
 function goBack() {
@@ -107,6 +115,7 @@ function restartFlow() {
                 name="minBudget"
                 type="number"
                 min="0"
+                step="1"
                 inputmode="numeric"
                 placeholder="₺"
                 required
@@ -119,6 +128,7 @@ function restartFlow() {
                 name="maxBudget"
                 type="number"
                 min="0"
+                step="1"
                 inputmode="numeric"
                 placeholder="₺"
                 required
@@ -126,11 +136,15 @@ function restartFlow() {
             </label>
           </div>
           <p
-            v-if="answers.minBudget && answers.maxBudget && !canContinue"
+            v-if="
+              answers.minBudget !== '' &&
+              answers.maxBudget !== '' &&
+              !canContinue
+            "
             class="form-error"
             role="alert"
           >
-            Maksimum bütçe minimum bütçeden düşük olamaz.
+            Tam sayı bütçe gir; maksimum bütçe minimumdan düşük olamaz.
           </p>
         </fieldset>
 
@@ -151,9 +165,32 @@ function restartFlow() {
     </div>
 
     <div v-else class="flow-complete" aria-live="polite">
-      <p class="eyebrow">Tamamlandı</p>
-      <h2 id="discovery-title">Tercihlerin alındı</h2>
-      <p>{{ categoryLabel }} sonuçları için hazırsın.</p>
+      <p class="eyebrow">Arama özeti</p>
+      <h2 id="discovery-title">Tercihlerin hazır</h2>
+      <dl class="answer-summary">
+        <div>
+          <dt>Kategori</dt>
+          <dd>{{ categoryLabel }}</dd>
+        </div>
+        <div>
+          <dt>Altın ayarı</dt>
+          <dd>{{ answers.goldKarat }} ayar</dd>
+        </div>
+        <div>
+          <dt>Stil</dt>
+          <dd>{{ answers.style.trim() }}</dd>
+        </div>
+        <div>
+          <dt>Bütçe</dt>
+          <dd>
+            {{ budgetFormatter.format(Number(answers.minBudget)) }} –
+            {{ budgetFormatter.format(Number(answers.maxBudget)) }}
+          </dd>
+        </div>
+      </dl>
+      <p>
+        Ürün kataloğu henüz eklenmediği için eşleşen ürünler gösterilemiyor.
+      </p>
       <button class="secondary-button" type="button" @click="restartFlow">
         Baştan başla
       </button>
