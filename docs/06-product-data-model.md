@@ -36,11 +36,14 @@ kullanıcıya gösterilen Türkçe adlar ise sunum katmanında tutulur.
 
 `DiscoveryAnswer` kayıtları aşağıdaki adım sırasını korur:
 
-1. Altın ayarı (`goldKarat`)
-2. Stil (`style`)
-3. Minimum ve maksimum bütçe (`minBudgetMinor`, `maxBudgetMinor`)
+1. Yüzük seçildiğinde yüzük kategorisi (`ringCollection`)
+2. Altın ayarı (`goldKarat`)
+3. Stil (`style`)
+4. Bütçe aralığı (`minBudgetMinor`, `maxBudgetMinor`)
 
 Bütçe değerleri para biriminin en küçük biriminde tam sayı olarak saklanmalıdır.
+`maxBudgetMinor`, 20.000 TL üzeri gibi açık üst sınırda `null` olur. Aralıklar
+alt sınır dahil, üst sınır hariç biçiminde yorumlanır.
 MVP'de `goldKarat` değeri `8`, `14`, `18` veya `22` olabilir.
 
 ## Modelleme ilkeleri

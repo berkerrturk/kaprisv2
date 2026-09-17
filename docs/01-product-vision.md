@@ -2,11 +2,11 @@
 
 ## Vizyon
 
-Kuyumculukta ürün keşfi, güven, canlı danışmanlık ve kişiselleştirilmiş üretimi tek bir deneyimde birleştirmek.
+Kuyumculukta ürün keşfi, satın alma, güven, canlı danışmanlık ve kişiselleştirilmiş üretimi tek bir pazaryeri deneyiminde birleştirmek.
 
 ## Değer önerisi
 
-Müşteriye kuyumculuk terimlerini bilmesini beklemeden doğru soruları sorar; farklı mağazaların stoklarından uygun seçenekleri sunar. Hazır ürün yeterli olmadığında özel tasarım yolunu açar.
+Müşteriye kuyumculuk terimlerini bilmesini beklemeden doğru soruları sorar; farklı mağazaların stoklarından uygun seçenekleri sunar ve satın almasını sağlar. Hazır ürünler tatmin etmediğinde müşteri isteğini tarif edebilir. İlerleyen aşamalarda mevcut ürünü kişiselleştirme, AR ile deneme ve metinden sıfırdan tasarım yolları açılır.
 
 ## İlk hedef
 

@@ -10,6 +10,7 @@
 - Ürün ve stok yönetimi
 - Sonuç sıralama ve yakın alternatifler
 - Ürün detayları
+- Sepet, ödeme ve sipariş oluşturma
 - Favoriler
 - Özel tasarım talep formu
 - Yönetici paneli
@@ -20,6 +21,7 @@
 - Otomatik text-to-CAD
 - Üretime hazır AI CAD
 - AR deneme
+- Gelişmiş ürün kişiselleştirme
 - Zorunlu 3D katalog
 - Mobil uygulamalar
 - Gelişmiş token sistemi
@@ -27,4 +29,4 @@
 
 ## MVP kabul ölçütü
 
-Bir müşteri kategori seçerek soruları tamamlayabilmeli, uygun stok ürünlerini görebilmeli, ürünü inceleyebilmeli ve sonuç yoksa talep bırakabilmelidir. Yönetici ürün, mağaza, fiyat ve stok bilgisini yönetebilmelidir.
+Bir müşteri kategori seçerek soruları tamamlayabilmeli, uygun stok ürünlerini görebilmeli, ürünü inceleyip siteden satın alabilmeli ve seçenekler tatmin etmezse isteğini tarif ederek talep bırakabilmelidir. Yönetici ürün, mağaza, fiyat, stok ve sipariş bilgisini yönetebilmelidir.

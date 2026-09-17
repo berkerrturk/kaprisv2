@@ -9,6 +9,8 @@
 - [ ] Yönlendirmeli ürün bulucu
 - [ ] Sonuç ve yakın alternatif sıralaması
 - [ ] Ürün detay sayfası
+- [ ] Sepet, ödeme ve sipariş oluşturma
+- [ ] Sipariş ve stok durumunu mağaza bazında yönetme
 - [ ] Favoriler
 - [ ] Özel tasarım talep formu
 - [ ] Yönetim paneli
@@ -16,6 +18,7 @@
 
 ## Sonraki fazlar
 
+- [ ] Hazır ürünlerde seçenek bazlı kişiselleştirme
 - [ ] Görüntülü danışman pilotu
 - [ ] 3D ürün pilotu
 - [ ] Yapılandırılmış özel tasarım brief'i

@@ -2,13 +2,14 @@
 
 ## Çalışma sırası
 
-1. Ürün kararlarını netleştir: MVP kategorileri, satış modeli, ilk katalog
-   büyüklüğü ve stok güncelleme yöntemi.
+1. Ürün kararlarını netleştir: MVP kategorileri ve sitede satın alma kararlaştırıldı;
+   ilk katalog büyüklüğü, stok güncelleme yöntemi ve ödeme operasyonu açık.
 2. Kategori filtrelerini ve standart örnek ürün verisini hazırla.
 3. Veri modeli ve mağaza izolasyonu kurallarını teknik şemaya dönüştür.
-4. Ana sayfa, kategori seçimi, soru akışı, sonuçlar ve ürün detayı için ilk
-   dikey akışı geliştir.
-5. Sonuç bulunamadığında yakın alternatif ve özel tasarım talebi akışını ekle.
+4. Ana sayfa, kategori seçimi, soru akışı, sonuçlar, ürün detayı ve satın alma
+   için ilk dikey akışı geliştir.
+5. Seçenekler tatmin etmediğinde yakın alternatif ve ürün tarifiyle özel tasarım
+   talebi akışını ekle.
 6. Yönetim, favoriler ve analitik işlevlerini küçük teslimatlar halinde ekle.
 
 ## İlk teknik temel

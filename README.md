@@ -1,6 +1,6 @@
 # Kapris V2 — Kuyumculuk Marketplace
 
-Kapris V2; müşterilerin kategori, bütçe, altın ayarı, renk, taş ve stil tercihleri üzerinden farklı kuyumcuların mevcut stoklarındaki uygun ürünleri keşfetmesini sağlayan dijital kuyumculuk pazaryeridir.
+Kapris V2; müşterilerin kategori, bütçe, altın ayarı, renk, taş ve stil tercihleri üzerinden farklı kuyumcuların mevcut stoklarındaki uygun ürünleri keşfedip satın almasını sağlayan dijital kuyumculuk pazaryeridir.
 
 > Durum: Planlama ve MVP hazırlığı  
 > İlk platform: Mobil uyumlu web sitesi  
@@ -9,7 +9,7 @@ Kapris V2; müşterilerin kategori, bütçe, altın ayarı, renk, taş ve stil t
 
 ## Ürün ilkesi
 
-**Önce mevcut stoklardan en uygun ürünü bul. Uygun ürün yoksa kişiye özel tasarım sürecini başlat.**
+**Önce mevcut stoklardan en uygun ürünü bul ve satın al. Seçenekler yeterli değilse isteğini tarif et; ilerleyen aşamada sıfırdan tasarıma geç.**
 
 ## Çözülen problem
 
@@ -20,9 +20,9 @@ Müşteriler çok sayıdaki takı arasında doğru ürünü bulmakta, teknik öz
 1. Müşteri yüzük, bileklik, bilezik, kolye veya küpe kategorilerinden birini seçer.
 2. Önce altın ayarı, sonra stil ve en son bütçe aralığı sorularını yanıtlar.
 3. Sistem kendi mağazamız ve partner mağazalardaki uygun stok ürünlerini sunar.
-4. Müşteri ürünü inceler, filtreleri değiştirir veya alternatiflere bakar.
-5. Aradığını bulamazsa özel tasarım talebi bırakır.
-6. İlerleyen sürümde bu talep text-to-CAD sürecine bağlanır.
+4. Müşteri ürünü inceler, filtreleri değiştirir, alternatiflere bakar ve uygun ürünü siteden satın alır.
+5. Seçenekler tatmin etmezse istediği ürünü tarif ederek özel tasarım talebi bırakır.
+6. İlerleyen sürümlerde hazır ürünleri kişiselleştirir, AR ile dener veya metin girdisiyle sıfırdan tasarım başlatır.
 
 ## MVP kapsamı
 
@@ -32,6 +32,7 @@ Müşteriler çok sayıdaki takı arasında doğru ürünü bulmakta, teknik öz
 - Çoklu mağaza ürün kataloğu
 - Mağaza bazlı fiyat ve stok
 - Ürün listeleme ve detay sayfası
+- Sepet, ödeme ve sipariş akışı
 - Yakın alternatifler
 - Favoriler
 - Özel tasarım talep formu
@@ -44,12 +45,13 @@ Müşteriler çok sayıdaki takı arasında doğru ürünü bulmakta, teknik öz
 
 ## Yol haritası
 
-1. **Stok odaklı web MVP:** Çoklu mağaza kataloğu ve yönlendirmeli ürün keşfi
-2. **Görüntülü danışman:** Kendi mağazamızın stok ürünlerinde canlı görüşme/randevu
-3. **3D görüntüleme:** Ürünü döndürme ve yakınlaştırma
-4. **Text-to-CAD:** Yapılandırılmış brief, tasarım, revizyon ve uzman kontrolü
-5. **AR deneme:** Yüzük, bileklik, küpe ve kolyenin kamera ile denenmesi
-6. **Mobil uygulama:** Ortak API kullanan iOS ve Android uygulamaları
+1. **Stok odaklı web MVP:** Çoklu mağaza kataloğu, yönlendirmeli keşif ve satın alma
+2. **Ürün kişiselleştirme:** Uygun ürünlerde seçenek bazlı değişiklik ve güncel fiyat/teslimat gösterimi
+3. **Görüntülü danışman:** Kendi mağazamızın stok ürünlerinde canlı görüşme/randevu
+4. **3D görüntüleme:** Ürünü döndürme ve yakınlaştırma
+5. **Text-to-CAD:** Müşteri tarifinden yapılandırılmış brief, tasarım, revizyon ve uzman kontrolü
+6. **AR deneme:** Mevcut ürünlerin kategoriye uygun kamera deneyimiyle denenmesi
+7. **Mobil uygulama:** Ortak API kullanan iOS ve Android uygulamaları
 
 ## Kullanıcı türleri
 
@@ -92,6 +94,7 @@ Referanslar kopyalanmayacak; başarılı deneyim prensipleri Kapris V2'ye uyarla
 - Özel tasarım talebi
 - Aradığını bulamayan kullanıcı oranı
 - Satışa veya mağaza ziyaretine dönüşüm
+- Sepetten ödemeye ve tamamlanan siparişe dönüşüm
 - Uygun ürünü bulma süresi
 
 ## Proje dokümanları
