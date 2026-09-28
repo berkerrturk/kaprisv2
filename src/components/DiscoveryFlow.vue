@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { computed, nextTick, reactive, ref } from 'vue'
+import { computed, nextTick, onMounted, reactive, ref } from 'vue'
 import CategoryArtwork from './CategoryArtwork.vue'
 import StyleArtwork from './StyleArtwork.vue'
 import type { Category } from '../data/categories'
 import {
   findProducts,
+  getCatalogProductBySku,
   pickFeaturedRingForCollection,
   type CatalogProduct,
   type RingCollectionId,
@@ -14,14 +15,22 @@ const props = defineProps<{
   categoryId: Category['id']
   categoryLabel: string
   featuredRingImage: string | null
+  initialProductSku: string | null
 }>()
 
 const emit = defineEmits<{
   backToCategories: []
   previewRingCollection: [imageUrl: string | null]
+  addToCart: [product: CatalogProduct]
 }>()
 
-const goldKaratOptions = [8, 14, 18, 22] as const
+const goldKaratOptions = [
+  { value: 0, label: 'Tüm ayarlar' },
+  { value: 8, label: '8 Ayar' },
+  { value: 14, label: '14 Ayar' },
+  { value: 18, label: '18 Ayar' },
+  { value: 22, label: '22 Ayar' },
+] as const
 const ringCollectionOptions = (
   [
     { id: 'minimal', label: 'Minimal Yüzük' },
@@ -44,7 +53,7 @@ const styleOptions = [
   { id: 'bold', label: 'İddialı', description: 'Dikkat çeken detaylar' },
 ] as const
 const budgetOptions = [
-  { label: '5.000–10.000 ₺', minBudget: 5000, maxBudget: 10000 },
+  { label: '10.000 ₺ altı', minBudget: 0, maxBudget: 10000 },
   { label: '10.000–20.000 ₺', minBudget: 10000, maxBudget: 20000 },
   { label: '20.000 ₺ üzeri', minBudget: 20000, maxBudget: null },
 ] as const
@@ -57,6 +66,13 @@ const budgetRange = ref<HTMLInputElement | null>(null)
 const budgetTier = ref(0)
 const visibleProductCount = ref(12)
 const selectedProduct = ref<CatalogProduct | null>(null)
+const selectedImageUrl = ref<string | null>(null)
+const deliveryPriorityVisible = ref(true)
+const prioritizeAvailable = ref(false)
+const availableOnly = ref(false)
+const resultSort = ref<'recommended' | 'price-asc' | 'price-desc'>(
+  'recommended',
+)
 const moneyEmoji = '💰'
 const answers = reactive({
   ringCollection: '',
@@ -108,8 +124,8 @@ const budgetSummary = computed(() => {
     ? `${minimum} üzeri`
     : `${minimum} – ${budgetFormatter.format(maxBudget)}`
 })
-const matchingProducts = computed(() => {
-  return findProducts({
+const catalogMatches = computed(() =>
+  findProducts({
     categoryId: props.categoryId,
     goldKarat: answers.goldKarat,
     style: answers.style,
@@ -119,7 +135,37 @@ const matchingProducts = computed(() => {
       selectedBudget.value.maxBudget === null
         ? null
         : selectedBudget.value.maxBudget * 100,
-  })
+  }),
+)
+const matchingProducts = computed(() => {
+  let products = catalogMatches.value
+
+  if (availableOnly.value) {
+    products = products.filter((product) => product.available)
+  }
+
+  if (resultSort.value === 'price-asc') {
+    return [...products].sort(
+      (first, second) => first.priceMinor - second.priceMinor,
+    )
+  }
+
+  if (resultSort.value === 'price-desc') {
+    return [...products].sort(
+      (first, second) => second.priceMinor - first.priceMinor,
+    )
+  }
+
+  if (!prioritizeAvailable.value) return products
+
+  return products
+    .map((product, index) => ({ product, index }))
+    .sort(
+      (first, second) =>
+        Number(second.product.available) - Number(first.product.available) ||
+        first.index - second.index,
+    )
+    .map(({ product }) => product)
 })
 const visibleProducts = computed(() =>
   matchingProducts.value.slice(0, visibleProductCount.value),
@@ -156,6 +202,14 @@ function previewRingCollection(imageUrl: string | null) {
   emit('previewRingCollection', imageUrl)
 }
 
+function hasFeaturedRingImage(karat: number): boolean {
+  return (
+    props.categoryId === 'ring' &&
+    karat === 14 &&
+    Boolean(props.featuredRingImage)
+  )
+}
+
 async function selectKarat(karat: number) {
   answers.goldKarat = karat
   currentStep.value = styleStep.value
@@ -181,6 +235,7 @@ async function showResults() {
 
 async function openProduct(product: CatalogProduct) {
   selectedProduct.value = product
+  selectedImageUrl.value = product.imageUrl
   await nextTick()
   detailHeading.value?.focus()
 }
@@ -188,6 +243,7 @@ async function openProduct(product: CatalogProduct) {
 async function closeProduct() {
   const sourceSku = selectedProduct.value?.sourceSku
   selectedProduct.value = null
+  selectedImageUrl.value = null
   await nextTick()
   flowRoot.value
     ?.querySelector<HTMLButtonElement>(`[data-product-sku="${sourceSku}"]`)
@@ -197,6 +253,19 @@ async function closeProduct() {
 function restartFlow() {
   emit('backToCategories')
 }
+
+function addSelectedProductToCart() {
+  if (!selectedProduct.value?.available) return
+  emit('addToCart', selectedProduct.value)
+}
+
+onMounted(() => {
+  if (!props.initialProductSku) return
+  const product = getCatalogProductBySku(props.initialProductSku)
+  if (!product) return
+  selectedProduct.value = product
+  selectedImageUrl.value = product.imageUrl
+})
 </script>
 
 <template>
@@ -213,13 +282,33 @@ function restartFlow() {
         <div class="product-detail-media">
           <img
             v-if="selectedProduct.imageUrl"
-            :src="selectedProduct.imageUrl"
+            :src="selectedImageUrl ?? selectedProduct.imageUrl"
             :alt="selectedProduct.name"
           />
-          <CategoryArtwork v-else category-id="ring" aria-hidden="true" />
+          <CategoryArtwork
+            v-else
+            :category-id="categoryId"
+            aria-hidden="true"
+          />
+          <div
+            v-if="selectedProduct.imageUrls.length > 1"
+            class="product-detail-thumbnails"
+            aria-label="Ürün görselleri"
+          >
+            <button
+              v-for="(imageUrl, index) in selectedProduct.imageUrls"
+              :key="imageUrl"
+              type="button"
+              :aria-label="`${index + 1}. görseli göster`"
+              :aria-pressed="selectedImageUrl === imageUrl"
+              @click="selectedImageUrl = imageUrl"
+            >
+              <img :src="imageUrl" alt="" loading="lazy" />
+            </button>
+          </div>
         </div>
         <div class="product-detail-info">
-          <p class="eyebrow">Kapris seçkisi · Minimal yüzük</p>
+          <p class="eyebrow">ALVYA seçkisi · {{ categoryLabel }}</p>
           <h2 id="discovery-title" ref="detailHeading" tabindex="-1">
             {{ selectedProduct.name }}
           </h2>
@@ -227,19 +316,19 @@ function restartFlow() {
             {{ budgetFormatter.format(selectedProduct.priceMinor / 100) }}
           </p>
           <p class="product-detail-price-note">
-            Gösterilen fiyat 16 Eylül 2026 tarihli katalog kaydıdır. Sipariş
-            öncesi güncel fiyat ve stok doğrulanacaktır.
+            Gösterilen fiyat katalog kaydıdır. Sipariş öncesi güncel fiyat ve
+            stok doğrulanacaktır.
           </p>
           <dl class="product-detail-specs">
-            <div>
+            <div v-if="selectedProduct.goldKarat">
               <dt>Altın ayarı</dt>
               <dd>{{ selectedProduct.goldKarat }} ayar</dd>
             </div>
-            <div>
+            <div v-if="selectedProduct.goldColor">
               <dt>Renk</dt>
               <dd>{{ selectedProduct.goldColor }} altın</dd>
             </div>
-            <div>
+            <div v-if="selectedProduct.weightGr">
               <dt>Gramaj</dt>
               <dd>{{ weightFormatter.format(selectedProduct.weightGr) }} gr</dd>
             </div>
@@ -251,14 +340,38 @@ function restartFlow() {
               <dt>Ürün kodu</dt>
               <dd>{{ selectedProduct.sourceSku }}</dd>
             </div>
+            <div>
+              <dt>Stok görünümü</dt>
+              <dd>
+                {{
+                  selectedProduct.available
+                    ? 'Stokta görünüyor'
+                    : 'Sipariş öncesi doğrulanacak'
+                }}
+              </dd>
+            </div>
           </dl>
-          <button class="primary-button" type="button" disabled>
-            Sepete ekle
+          <button
+            class="primary-button product-add-button"
+            type="button"
+            :disabled="!selectedProduct.available"
+            @click="addSelectedProductToCart"
+          >
+            {{
+              selectedProduct.available
+                ? 'Sepete ekle'
+                : 'Stok doğrulaması gerekli'
+            }}
           </button>
           <p class="product-detail-purchase-note">
-            Online sipariş, canlı stok ve ödeme bağlantısı tamamlandığında
-            açılacak.
+            Bu prototipte tahsilat yapılmaz. Ürün sepete eklenir ve test sipariş
+            akışıyla kontrol edilir.
           </p>
+          <div class="product-detail-assurances" aria-label="Sipariş bilgileri">
+            <span>✓ Siparişten önce fiyat teyidi</span>
+            <span>✓ Stok doğrulaması</span>
+            <span>✓ Güvenli ödeme altyapısına hazır</span>
+          </div>
         </div>
       </div>
     </div>
@@ -307,24 +420,24 @@ function restartFlow() {
           <div class="choice-grid">
             <button
               v-for="karat in goldKaratOptions"
-              :key="karat"
+              :key="karat.value"
               class="choice-option karat-card"
-              :class="{ 'choice-option-selected': answers.goldKarat === karat }"
-              :data-karat="karat"
-              :aria-pressed="answers.goldKarat === karat"
+              :class="{
+                'choice-option-selected': answers.goldKarat === karat.value,
+              }"
+              :data-karat="karat.value"
+              :aria-pressed="answers.goldKarat === karat.value"
               type="button"
-              @click="selectKarat(karat)"
+              @click="selectKarat(karat.value)"
             >
               <img
-                v-if="
-                  categoryId === 'ring' && karat === 14 && featuredRingImage
-                "
+                v-if="hasFeaturedRingImage(karat.value)"
                 class="featured-product-background"
-                :src="featuredRingImage"
+                :src="featuredRingImage ?? ''"
                 alt=""
                 aria-hidden="true"
               />
-              <span class="card-label">{{ karat }} Ayar</span>
+              <span class="card-label">{{ karat.label }}</span>
             </button>
           </div>
         </fieldset>
@@ -447,7 +560,11 @@ function restartFlow() {
         </div>
         <div>
           <dt>Altın ayarı</dt>
-          <dd>{{ answers.goldKarat }} ayar</dd>
+          <dd>
+            {{
+              answers.goldKarat ? `${answers.goldKarat} ayar` : 'Tüm ayarlar'
+            }}
+          </dd>
         </div>
         <div>
           <dt>Stil</dt>
@@ -460,20 +577,71 @@ function restartFlow() {
           </dd>
         </div>
       </dl>
-      <div v-if="matchingProducts.length" class="results-section">
+      <aside
+        v-if="deliveryPriorityVisible && matchingProducts.length"
+        class="delivery-priority-card"
+        :class="{ 'is-delivery-prioritized': prioritizeAvailable }"
+        aria-label="Hızlı teslimat seçeneği"
+      >
+        <span class="delivery-priority-icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48">
+            <circle cx="27" cy="24" r="12" />
+            <path d="M27 17v8l5 3M4 17h10M7 24h7M10 31h6" />
+          </svg>
+        </span>
+        <div>
+          <strong>Hızlı mı lazım?</strong>
+          <button
+            type="button"
+            class="delivery-priority-action"
+            @click="prioritizeAvailable = !prioritizeAvailable"
+          >
+            {{
+              prioritizeAvailable
+                ? 'Standart sıralamaya dön'
+                : 'Stokta olanları önce göster'
+            }}
+          </button>
+          <small>Stok bilgisi sipariş öncesinde yeniden doğrulanır.</small>
+        </div>
+        <button
+          class="delivery-priority-close"
+          type="button"
+          aria-label="Hızlı teslimat önerisini kapat"
+          @click="deliveryPriorityVisible = false"
+        >
+          ×
+        </button>
+      </aside>
+      <div v-if="catalogMatches.length" class="results-section">
         <div class="results-heading">
           <div>
-            <p class="eyebrow">Kapris seçkisi</p>
+            <p class="eyebrow">ALVYA seçkisi</p>
             <h3 ref="resultsAnchor" tabindex="-1">
-              {{ matchingProducts.length }} yüzük bulundu
+              {{ matchingProducts.length }}
+              {{ categoryLabel.toLocaleLowerCase('tr-TR') }} bulundu
             </h3>
           </div>
           <p>
-            16 Eylül 2026 tarihli fiyatlar · Güncel fiyat ve stok sipariş öncesi
-            doğrulanacak
+            Katalog fiyatları · Güncel fiyat ve stok sipariş öncesi doğrulanacak
+            <template v-if="prioritizeAvailable"> · Stoktakiler önce</template>
           </p>
         </div>
-        <ul class="product-grid">
+        <div class="product-toolbar" aria-label="Ürün sıralama ve filtreleme">
+          <label class="availability-filter">
+            <input v-model="availableOnly" type="checkbox" />
+            <span>Yalnızca stokta olanlar</span>
+          </label>
+          <label class="result-sort">
+            <span>Sırala</span>
+            <select v-model="resultSort">
+              <option value="recommended">Önerilen sıralama</option>
+              <option value="price-asc">Fiyat: düşükten yükseğe</option>
+              <option value="price-desc">Fiyat: yüksekten düşüğe</option>
+            </select>
+          </label>
+        </div>
+        <ul v-if="matchingProducts.length" class="product-grid">
           <li v-for="product in visibleProducts" :key="product.sourceSku">
             <button
               class="result-card"
@@ -482,19 +650,31 @@ function restartFlow() {
               @click="openProduct(product)"
             >
               <span class="result-card-art">
+                <span v-if="product.available" class="stock-badge">
+                  Stokta
+                </span>
                 <img
                   v-if="product.imageUrl"
                   :src="product.imageUrl"
                   :alt="product.name"
                   loading="lazy"
                 />
-                <CategoryArtwork v-else category-id="ring" aria-hidden="true" />
+                <CategoryArtwork
+                  v-else
+                  :category-id="categoryId"
+                  aria-hidden="true"
+                />
               </span>
               <span class="result-card-body">
-                <span class="result-card-source">Kapris seçkisi</span>
+                <span class="result-card-source">ALVYA seçkisi</span>
                 <span class="result-card-title">{{ product.name }}</span>
                 <span class="result-card-details">
-                  {{ product.goldKarat }} ayar · {{ product.weightGr }} gr ·
+                  <template v-if="product.goldKarat">
+                    {{ product.goldKarat }} ayar ·
+                  </template>
+                  <template v-if="product.weightGr">
+                    {{ product.weightGr }} gr ·
+                  </template>
                   {{ product.goldColor }} altın
                 </span>
                 <span class="result-card-price">
@@ -507,13 +687,17 @@ function restartFlow() {
             </button>
           </li>
         </ul>
+        <p v-else class="results-filter-empty">
+          Bu filtreyle stokta görünen ürün bulunamadı. Stok filtresini
+          kaldırarak tüm seçenekleri görebilirsin.
+        </p>
         <button
           v-if="visibleProductCount < matchingProducts.length"
           class="secondary-button results-more"
           type="button"
           @click="visibleProductCount += 12"
         >
-          Daha fazla yüzük göster
+          Daha fazla ürün göster
         </button>
       </div>
       <p v-else ref="resultsAnchor" class="results-empty" tabindex="-1">

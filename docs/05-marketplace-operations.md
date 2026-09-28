@@ -4,7 +4,7 @@
 
 İlk katalog kendi mağazamızla başlar. Partner mağazalar kontrollü şekilde eklenir. İlk dönemde veri girişi ve onay yönetici üzerinden yürütülebilir.
 
-Goldium ilk ürün veri tedarikçisidir. Minimal yüzükler Kapris kataloğunda ve Kapris ürün detayında gösterilir; müşteri ürün incelemek için tedarikçi sitesine yönlendirilmez. Tedarikçi kimliği ve kaynak ürün kodu iç kayıtta korunur. Kapris üzerinden satış için varyant bazlı stok, güncel satış fiyatı ve sipariş operasyonu ayrıca bağlanmalıdır.
+Goldium ilk ürün veri tedarikçisidir. Minimal yüzükler ALVYA kataloğunda ve ALVYA ürün detayında gösterilir; müşteri ürün incelemek için tedarikçi sitesine yönlendirilmez. Tedarikçi kimliği ve kaynak ürün kodu iç kayıtta korunur. ALVYA üzerinden satış için varyant bazlı stok, güncel satış fiyatı ve sipariş operasyonu ayrıca bağlanmalıdır.
 
 ## Mağaza sorumlulukları
 
@@ -13,6 +13,13 @@ Doğru ürün bilgisi, güncel fiyat/stok, fotoğraflar, teslimat ve iade koşul
 ## Platform sorumlulukları
 
 Standart veri yapısı, mağaza/ürün onayı, erişim yetkileri, sipariş ve müşteri taleplerinin doğru mağazaya yönlendirilmesi ve kalite kontrolü. Müşteri satın almayı sitede tamamlar; ödeme, stok ayırma, teslimat ve iade sorumluluklarının ayrıntıları karara bağlanacaktır.
+
+## Prototip sipariş sınırı
+
+Mevcut web prototipi müşterinin ürünü sepete ekleyip teslimat bilgilerini
+girebildiği bir test akışı içerir. Bu akış gerçek tahsilat yapmaz, stok ayırmaz
+ve mağazaya sipariş iletmez. Canlıya geçişte fiyat ve stok sipariş anında
+sunucudan doğrulanmalı; ödeme sonucu doğrulanmadan sipariş kesinleştirilmemelidir.
 
 ## Karar bekleyen konular
 

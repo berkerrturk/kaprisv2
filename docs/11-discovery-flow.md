@@ -9,6 +9,38 @@ Tarif metni gerçek bir bulut silüetinin içine yazılır; ayrı düşünce nok
 gösterilmez. Düşünen kadın görseli bulutun sol alt köşesinde küçük ve
 dekoratif olarak kalır.
 
+Sayfanın üstünde iki katmanlı mağaza menüsü bulunur. İnce üst şerit sipariş,
+iletişim, mağaza ve dil bağlantılarını; ana şerit ALVYA logosunu, koleksiyon
+bağlantılarını, aramayı, favorileri, hesabı ve sepeti gösterir. Sol üstteki üç
+çizgili düğme üzerine gelindiğinde, klavye odağı aldığında veya dokunulduğunda
+kategori menüsü açılır. Menüde mevcut MVP kategorilerine ek olarak `İndirimli
+Ürünler`, `Erkek` ve `Çocuk` mağaza başlıkları yer alır. Bu üç başlık için ürün
+verisi ve filtre taksonomisi doğrulanana kadar yönlendirmeli ürün bulucu akışı
+başlatılmaz.
+
+## Ana sayfa keşif yaklaşımı
+
+26 Eylül 2026 tarihinde Altınbaş, Pandora Türkiye, Tiffany, Cartier, Blue Nile
+ve Baymard'ın kuyumculuk e-ticaret araştırması incelendi. Bu incelemeden ürün
+kategorilerini anlaşılır sunma, hediye amacıyla keşif, fiyat ve materyal temelli
+daraltma, görünür ürün bilgisi ve satış sonrası destek başlıkları ALVYA'ya
+uyarlandı.
+
+Ana sayfa; ürün bulucuya yönlendiren açıklayıcı bir giriş, ALVYA yaklaşımını
+anlatan bilgi şeridi, mevcut kategori kartları, özel güne göre keşif kısayolları,
+özel tasarım tarifi ve ürün bulucunun nasıl değer sağladığını anlatan kapanış
+alanından oluşur. Özel gün kısayolları katalog etiketleri tamamlanana kadar aynı
+kategori başlangıcına gider. Güven alanları canlı ödeme, garanti veya teslimat
+vaadi oluşturmaz; yalnızca mevcut stok odaklı ürün bulma ve siparişten önce bilgi
+doğrulama yaklaşımını açıklar.
+
+ALVYA'nın ana renkleri sıcak krem, pudra pembe, gül kurusu, şampanya ve inci
+tonlarıdır. Özel gün kartları doğum günü, yıldönümü, mezuniyet ve kişinin kendisi
+için alışveriş anlarını gösteren özgün görseller kullanır. Kart üzerine gelince
+veya klavye odağı alınca görsel kartın içinde belirir ve sayfanın arkasında silik
+bir önizleme olarak gösterilir. Mezuniyet kartında kepli yetişkin kadın mezun
+görseli kullanılır.
+
 ## Onaylanan sıra
 
 Kategori seçiminden sonra yüzükte sorular şu sırayla gösterilir:
@@ -88,9 +120,9 @@ düğmesi bulunur; bu düğme kategori
 seçimine döner. `Tercihlerin hazır` başlığı gösterilmez.
 Yüzük, 14 ayar ve Minimal
 seçiminde Goldium tedarikçisinden 16 Eylül 2026 tarihinde kaydedilen minimal yüzükler
-Kapris kataloğunda bütçe aralığına göre gösterilir. Karttan Kapris içindeki ürün
+ALVYA kataloğunda bütçe aralığına göre gösterilir. Karttan ALVYA içindeki ürün
 detayına geçilir; müşteriye tedarikçi sitesine yönlendirme yapılmaz. Diğer
 kombinasyonlarda doğrulanmış ürün olmadığı açıkça belirtilir. Fiyat ve stok
-henüz canlı bağlanmadığından Kapris üzerinde satın alma açık değildir. Bütçe sınırları
+henüz canlı bağlanmadığından ALVYA üzerinde satın alma açık değildir. Bütçe sınırları
 veri modelindeki en küçük para birimine dönüştürülür; son aralığın üst sınırı
 yoktur.

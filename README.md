@@ -1,6 +1,9 @@
-# Kapris V2 — Kuyumculuk Marketplace
+# ALVYA — Kuyumculuk Marketplace
 
-Kapris V2; müşterilerin kategori, bütçe, altın ayarı, renk, taş ve stil tercihleri üzerinden farklı kuyumcuların mevcut stoklarındaki uygun ürünleri keşfedip satın almasını sağlayan dijital kuyumculuk pazaryeridir.
+ALVYA; müşterilerin kategori, bütçe, altın ayarı, renk, taş ve stil tercihleri üzerinden farklı kuyumcuların mevcut stoklarındaki uygun ürünleri keşfedip satın almasını sağlayan dijital kuyumculuk pazaryeridir.
+
+**Marka sloganı:** Her tarz. Her an. Tek yerde.
+**Global slogan:** Jewelry for every moment.
 
 > Durum: Planlama ve MVP hazırlığı  
 > İlk platform: Mobil uyumlu web sitesi  
@@ -13,11 +16,11 @@ Kapris V2; müşterilerin kategori, bütçe, altın ayarı, renk, taş ve stil t
 
 ## Çözülen problem
 
-Müşteriler çok sayıdaki takı arasında doğru ürünü bulmakta, teknik özellikleri karşılaştırmakta ve farklı kuyumcuların stoklarına tek noktadan erişmekte zorlanıyor. Kapris V2 müşterinin ihtiyacını anlaşılır sorularla daraltır ve uygun ürünleri sıralar.
+Müşteriler çok sayıdaki takı arasında doğru ürünü bulmakta, teknik özellikleri karşılaştırmakta ve farklı kuyumcuların stoklarına tek noktadan erişmekte zorlanıyor. ALVYA müşterinin ihtiyacını anlaşılır sorularla daraltır ve uygun ürünleri sıralar.
 
 ## Temel müşteri yolculuğu
 
-1. Müşteri yüzük, bileklik, bilezik, kolye veya küpe kategorilerinden birini seçer.
+1. Müşteri yüzük, bileklik, bilezik, kolye, küpe, charm veya takı seti kategorilerinden birini seçer.
 2. Önce altın ayarı, sonra stil ve en son bütçe aralığı sorularını yanıtlar.
 3. Sistem kendi mağazamız ve partner mağazalardaki uygun stok ürünlerini sunar.
 4. Müşteri ürünü inceler, filtreleri değiştirir, alternatiflere bakar ve uygun ürünü siteden satın alır.
@@ -83,7 +86,7 @@ olmalıdır. Teknik seçimler gerekçeleriyle [teknik mimari dokümanında](docs
 - **CustomMade:** Kişiye özel tasarım, uzman iletişimi, teklif ve revizyon akışı
 - **Blue Nile:** Adım adım ürün oluşturma, taş/metal/model seçimi ve fiyat deneyimi
 
-Referanslar kopyalanmayacak; başarılı deneyim prensipleri Kapris V2'ye uyarlanacaktır.
+Referanslar kopyalanmayacak; başarılı deneyim prensipleri ALVYA'ya uyarlanacaktır.
 
 ## Başarı ölçütleri
 
@@ -115,6 +118,10 @@ Referanslar kopyalanmayacak; başarılı deneyim prensipleri Kapris V2'ye uyarla
 ## Geliştirmeye başlama
 
 Codex veya geliştirici önce `AGENTS.md`, ardından bu README ve ilgili görev dokümanını okumalıdır. MVP kapsamını değiştiren kararlar koddan önce dokümana işlenmelidir.
+
+Goldium ürün kataloğunu ve eksik görselleri güncellemek için `npm run sync:goldium`
+komutu kullanılır. Senkronizasyon mevcut görselleri korur ve yalnızca eksikleri
+indirir.
 
 ## Lisans
 

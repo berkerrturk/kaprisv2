@@ -5,4 +5,8 @@ dist/
 .tmp-node.zip
 .tmp-mingit/
 .tmp-mingit.zip
+.tools/
+.env
+.env.*
+!.env.example
 *.tsbuildinfo

@@ -1,5 +1,5 @@
-import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { flushPromises, mount } from '@vue/test-utils'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import App from './App.vue'
 import {
   goldiumMinimalRings,
@@ -8,18 +8,73 @@ import {
 } from './data/productCatalog'
 
 describe('App', () => {
+  beforeEach(() => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({
+          reply: 'Harika. Tercih ettiğin altın ayarı nedir?',
+        }),
+      }),
+    )
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+    vi.unstubAllGlobals()
+  })
+
   it('shows the main heading', () => {
     const wrapper = mount(App)
 
-    expect(wrapper.get('h1').text()).toBe('Tarzını seç ya da tarif et')
+    expect(wrapper.get('h1').text()).toBe(
+      'Sana yakışan takıyı birlikte bulalım.',
+    )
     expect(wrapper.text()).not.toContain(
       'Aradığın takıyı seçerek keşfetmeye başla.',
     )
-    expect(wrapper.find('.brand').exists()).toBe(false)
+    expect(wrapper.get('.site-header .brand').text()).toBe('ALVYA')
+    expect(wrapper.find('.brand-mark').exists()).toBe(true)
+    expect(wrapper.get('.utility-message').text()).toBe(
+      'Her tarz. Her an. Tek yerde.',
+    )
+    expect(wrapper.get('.hero-kicker').text()).toBe('Jewelry for every moment.')
     expect(wrapper.find('.hero .eyebrow').exists()).toBe(false)
   })
 
+  it('presents guided discovery, trust details and occasion previews', async () => {
+    const wrapper = mount(App)
+
+    expect(wrapper.findAll('.trust-strip article')).toHaveLength(4)
+    expect(
+      wrapper.findAll('.occasion-grid a').map((link) => link.text()),
+    ).toEqual([
+      '01Doğum günüHatırlanacak bir hediye',
+      '02YıldönümüBirlikte geçen zamana',
+      '03MezuniyetYeni bir başlangıca',
+      '04Kendin içinTarzını tamamlayan seçim',
+    ])
+    expect(wrapper.get('.service-callout').text()).toContain(
+      'Önce seçeneklerini daralt.',
+    )
+
+    const graduation = wrapper.get('.occasion-graduation')
+    await graduation.trigger('pointerenter')
+    expect(wrapper.get('.category-page-backdrop img').attributes('src')).toBe(
+      '/occasions/graduation.webp',
+    )
+    await graduation.trigger('pointerleave')
+    expect(wrapper.find('.category-page-backdrop').exists()).toBe(false)
+    await graduation.trigger('click')
+    expect(graduation.classes()).toContain('occasion-selected')
+    expect(wrapper.get('.category-page-backdrop img').attributes('src')).toBe(
+      '/occasions/graduation.webp',
+    )
+  })
+
   it('lets visitors prepare a design description beneath the categories', async () => {
+    vi.useFakeTimers()
     const wrapper = mount(App)
     const prompt = wrapper.get('#design-prompt-input')
 
@@ -32,21 +87,75 @@ describe('App', () => {
       'İnce, zarif',
     )
     await wrapper.get('.design-prompt').trigger('submit')
-    expect(wrapper.get('.prepared-prompt').text()).toContain('İnce, zarif')
-    await prompt.setValue('Yeni bir tasarım fikri')
-    expect(wrapper.find('.prepared-prompt').exists()).toBe(false)
-    await wrapper.get('[data-category-id="ring"]').trigger('click')
-    expect(wrapper.find('.design-studio').exists()).toBe(false)
+    await flushPromises()
+    expect(wrapper.findAll('.design-chat-message')).toHaveLength(2)
+    expect(wrapper.get('.design-chat-thread').text()).toContain(
+      'Tercih ettiğin altın ayarı nedir?',
+    )
+    await wrapper.get('.chat-search-products').trigger('click')
+    expect(wrapper.get('.design-search-loading').text()).toContain(
+      'Tarifinize en yakın ürünler aranıyor',
+    )
+    expect(wrapper.find('.site-header').exists()).toBe(false)
+    expect(wrapper.find('[role="progressbar"]').exists()).toBe(true)
+    await vi.advanceTimersByTimeAsync(1800)
+    expect(wrapper.get('.design-search-results').text()).toContain(
+      'İnce, zarif',
+    )
+    expect(wrapper.get('.design-search-results h1').text()).toBe(
+      'Tarifine en yakın ürünler',
+    )
+    expect(wrapper.findAll('.prompt-product-grid li')).toHaveLength(4)
+    expect(wrapper.findAll('.design-result-weight')).toHaveLength(4)
+    expect(wrapper.get('.design-result-weight').text()).toMatch(/Gramaj.+gr/)
+    expect(wrapper.get('.design-result-price').text()).toContain('₺')
+    await wrapper.get('.design-results-back').trigger('click')
+    expect(wrapper.find('.design-studio').exists()).toBe(true)
   })
 
-  it('shows the primary navigation links', () => {
+  it('opens a matching catalog product before a custom design request', async () => {
+    vi.useFakeTimers()
     const wrapper = mount(App)
-    const links = wrapper.findAll('nav a')
 
-    expect(links.map((link) => link.text())).toEqual([
-      'Ana Sayfa',
-      'Kategoriler',
-      'İletişim',
+    await wrapper.get('.prompt-examples button').trigger('click')
+    await wrapper.get('.design-prompt').trigger('submit')
+    await flushPromises()
+    await wrapper.get('.chat-search-products').trigger('click')
+    await vi.advanceTimersByTimeAsync(1800)
+    const firstMatch = wrapper.get('.prompt-product-grid button')
+    const productName = firstMatch.get('strong').text()
+
+    await firstMatch.trigger('click')
+
+    expect(wrapper.find('.design-studio').exists()).toBe(false)
+    expect(wrapper.get('.product-detail h2').text()).toBe(productName)
+    expect(wrapper.find('a[href*="goldium.com.tr"]').exists()).toBe(false)
+  })
+
+  it('shows the header navigation and every storefront category', async () => {
+    const wrapper = mount(App)
+    const trigger = wrapper.get('.menu-trigger')
+
+    expect(
+      wrapper.findAll('.collection-links a').map((link) => link.text()),
+    ).toEqual(['Kadın', 'Erkek', 'Genç', 'Çocuk'])
+
+    expect(trigger.attributes('aria-expanded')).toBe('false')
+    await trigger.trigger('click')
+    expect(trigger.attributes('aria-expanded')).toBe('true')
+    expect(
+      wrapper.findAll('.category-dropdown nav a').map((link) => link.text()),
+    ).toEqual([
+      'Yüzük →',
+      'Bileklik →',
+      'Bilezik →',
+      'Kolye →',
+      'Küpe →',
+      'Charm →',
+      'Takı Seti →',
+      'İndirimli Ürünler →',
+      'Erkek →',
+      'Çocuk →',
     ])
   })
 
@@ -60,10 +169,26 @@ describe('App', () => {
       'Bilezik',
       'Kolye',
       'Küpe',
+      'Charm',
+      'Takı Seti',
     ])
     expect(
       categoryButtons.every((button) => button.findAll('svg').length === 0),
     ).toBe(true)
+  })
+
+  it('returns to the home page when the ALVYA brand is selected', async () => {
+    const wrapper = mount(App)
+
+    await wrapper.get('[data-category-id="ring"]').trigger('click')
+    expect(wrapper.findAll('.category-card')).toHaveLength(0)
+
+    await wrapper.get('.site-header .brand').trigger('click')
+
+    expect(wrapper.findAll('.category-card')).toHaveLength(7)
+    expect(wrapper.get('.hero h1').text()).toBe(
+      'Sana yakışan takıyı birlikte bulalım.',
+    )
   })
 
   it('previews each category photo across the page only while its card is active', async () => {
@@ -77,6 +202,8 @@ describe('App', () => {
       'bangle',
       'necklace',
       'earring',
+      'charm',
+      'jewelry-set',
     ]) {
       const card = wrapper.get(`[data-category-id="${category}"]`)
       await card.trigger('pointerenter')
@@ -95,19 +222,19 @@ describe('App', () => {
       .get('[data-category-id="ring"] img')
       .attributes('src')
 
-    expect(categoryRingImage).toBe('/products/featured-ring.png')
+    expect(categoryRingImage).toMatch(/^\/products\/goldium\/.+/)
     expect(
       wrapper.get('[data-category-id="bracelet"] img').attributes('src'),
-    ).toBe('/products/featured-bracelet.png')
+    ).toMatch(/^\/products\/goldium\/.+/)
     expect(
       wrapper.get('[data-category-id="bangle"] img').attributes('src'),
-    ).toBe('/products/featured-bangle.png')
+    ).toMatch(/^\/products\/goldium\/.+/)
     expect(
       wrapper.get('[data-category-id="necklace"] img').attributes('src'),
-    ).toBe('/products/featured-necklace.png')
+    ).toMatch(/^\/products\/goldium\/.+/)
     expect(
       wrapper.get('[data-category-id="earring"] img').attributes('src'),
-    ).toBe('/products/featured-earring.png')
+    ).toMatch(/^\/products\/goldium\/.+/)
 
     await wrapper.get('[data-category-id="ring"]').trigger('click')
 
@@ -125,7 +252,7 @@ describe('App', () => {
     await minimalCard.trigger('pointerleave')
     expect(wrapper.find('.category-page-backdrop').exists()).toBe(false)
     await wrapper.get('[data-ring-collection="minimal"]').trigger('click')
-    expect(wrapper.findAll('.karat-card')).toHaveLength(4)
+    expect(wrapper.findAll('.karat-card')).toHaveLength(5)
     expect(wrapper.get('[data-karat="14"]').findAll('svg')).toHaveLength(0)
     expect(wrapper.get('[data-karat="8"]').findAll('svg')).toHaveLength(0)
     expect(wrapper.get('[data-karat="14"] img').attributes('src')).toMatch(
@@ -144,7 +271,7 @@ describe('App', () => {
     await wrapper.get('.flow-actions .secondary-button').trigger('click')
     expect(wrapper.findAll('.ring-collection-card')).toHaveLength(8)
     await wrapper.get('.flow-actions .secondary-button').trigger('click')
-    expect(wrapper.findAll('.category-card')).toHaveLength(5)
+    expect(wrapper.findAll('.category-card')).toHaveLength(7)
   })
 
   it('chooses a different 14 karat ring than the previous visit', () => {
@@ -164,7 +291,9 @@ describe('App', () => {
     await wrapper.get('[data-category-id="ring"]').trigger('click')
     const stoneCard = wrapper.get('[data-ring-collection="stone"]')
 
-    expect(stoneCard.get('img').attributes('src')).toContain('cdn.shopify.com')
+    expect(stoneCard.get('img').attributes('src')).toMatch(
+      /^\/products\/goldium\/.+/,
+    )
     await stoneCard.trigger('pointerenter')
     expect(wrapper.get('.category-page-backdrop').classes()).toContain(
       'ring-collection-preview',
@@ -198,7 +327,7 @@ describe('App', () => {
     const goldOptions = wrapper.findAll('.karat-card')
     expect(
       goldOptions.map((option) => option.attributes('data-karat')),
-    ).toEqual(['8', '14', '18', '22'])
+    ).toEqual(['0', '8', '14', '18', '22'])
 
     await wrapper.get('[data-karat="14"]').trigger('click')
     expect(wrapper.get('legend').text()).toBe('Hangi stili arıyorsun?')
@@ -232,7 +361,7 @@ describe('App', () => {
     await wrapper.get('[data-karat="14"]').trigger('click')
     await wrapper.get('.style-card').trigger('click')
 
-    expect(wrapper.get('.budget-current').text()).toBe('5.000–10.000 ₺')
+    expect(wrapper.get('.budget-current').text()).toBe('10.000 ₺ altı')
     expect(wrapper.findAll('.budget-stop')).toHaveLength(3)
     expect(
       wrapper.findAll('.budget-stop').map((stop) => stop.attributes('style')),
@@ -269,7 +398,7 @@ describe('App', () => {
     expect(wrapper.text()).toContain('uygun doğrulanmış örnek ürün henüz yok')
   })
 
-  it('shows supplier rings inside Kapris and opens an internal product detail', async () => {
+  it('shows supplier rings inside ALVYA and opens an internal product detail', async () => {
     const wrapper = mount(App)
 
     await wrapper.get('[data-category-id="ring"]').trigger('click')
@@ -278,15 +407,33 @@ describe('App', () => {
     await wrapper.get('.style-card').trigger('click')
     await wrapper.get('form').trigger('submit')
 
-    expect(wrapper.get('.results-heading h3').text()).toBe('42 yüzük bulundu')
+    expect(wrapper.get('.results-heading h3').text()).toBe('46 yüzük bulundu')
     expect(wrapper.findAll('.result-card')).toHaveLength(12)
     expect(wrapper.get('.result-card').text()).toContain(
       '14 Ayar Altın Mini Kelebek Yüzük',
     )
     expect(wrapper.get('.result-card').text()).toContain('6.020')
-    expect(wrapper.get('.result-card img').attributes('src')).toBe(
-      '/products/Y89895.webp',
+    expect(wrapper.get('.result-card img').attributes('src')).toMatch(
+      /^\/products\/goldium\/.+/,
     )
+    expect(wrapper.get('.delivery-priority-card').text()).toContain(
+      'Hızlı mı lazım?',
+    )
+    expect(wrapper.get('.result-card .stock-badge').text()).toBe('Stokta')
+    expect(wrapper.get('.product-toolbar').text()).toContain(
+      'Yalnızca stokta olanlar',
+    )
+    await wrapper.get('.result-sort select').setValue('price-desc')
+    const sortedPrices = wrapper
+      .findAll('.result-card-price')
+      .map((price) => price.text())
+    expect(sortedPrices.length).toBeGreaterThan(1)
+    await wrapper.get('.result-sort select').setValue('recommended')
+    await wrapper.get('.delivery-priority-action').trigger('click')
+    expect(wrapper.get('.delivery-priority-card').classes()).toContain(
+      'is-delivery-prioritized',
+    )
+    expect(wrapper.get('.results-heading').text()).toContain('Stoktakiler önce')
     expect(wrapper.text()).not.toContain("Goldium'da incele")
     expect(wrapper.find('a[href*="goldium.com.tr"]').exists()).toBe(false)
 
@@ -301,11 +448,73 @@ describe('App', () => {
     expect(wrapper.get('.product-detail-specs').text()).toContain('Zirkon')
     expect(
       wrapper.get('.product-detail .primary-button').attributes('disabled'),
-    ).toBeDefined()
+    ).toBeUndefined()
     expect(wrapper.find('a[href*="goldium.com.tr"]').exists()).toBe(false)
 
     await wrapper.get('.detail-back').trigger('click')
     expect(wrapper.findAll('.result-card')).toHaveLength(24)
+  })
+
+  it('completes the local cart and test checkout without taking payment', async () => {
+    const wrapper = mount(App)
+
+    await wrapper.get('[data-category-id="ring"]').trigger('click')
+    await wrapper.get('[data-ring-collection="minimal"]').trigger('click')
+    await wrapper.get('[data-karat="14"]').trigger('click')
+    await wrapper.get('.style-card').trigger('click')
+    await wrapper.get('form').trigger('submit')
+    await wrapper.get('.result-card').trigger('click')
+    await wrapper.get('.product-add-button').trigger('click')
+
+    expect(wrapper.get('.checkout-panel').text()).toContain('Sepetin')
+    expect(wrapper.get('.header-actions a[href="#sepet"]').text()).toContain(
+      'Sepet (1)',
+    )
+    await wrapper.get('.checkout-primary').trigger('click')
+
+    await wrapper
+      .get('.checkout-fields input[autocomplete="name"]')
+      .setValue('Test Kullanıcı')
+    await wrapper
+      .get('.checkout-fields input[type="email"]')
+      .setValue('test@example.com')
+    await wrapper
+      .get('.checkout-fields input[type="tel"]')
+      .setValue('5555555555')
+    await wrapper
+      .get('.checkout-fields input[autocomplete="address-level2"]')
+      .setValue('İstanbul')
+    await wrapper.get('.checkout-fields textarea').setValue('Test adresi')
+    await wrapper.get('.checkout-form').trigger('submit')
+
+    expect(wrapper.get('.order-complete').text()).toContain(
+      'Herhangi bir ödeme veya gerçek sipariş oluşturulmadı.',
+    )
+    expect(wrapper.get('.order-complete').text()).toContain('ALV-')
+    await wrapper.get('.order-complete .checkout-primary').trigger('click')
+    expect(wrapper.find('.checkout-panel').exists()).toBe(false)
+    expect(wrapper.get('.header-actions a[href="#sepet"]').text()).toContain(
+      'Sepet (0)',
+    )
+  })
+
+  it('shows the full local catalog for a non-ring category', async () => {
+    const wrapper = mount(App)
+
+    await wrapper.get('[data-category-id="necklace"]').trigger('click')
+    await wrapper.get('[data-karat="0"]').trigger('click')
+    await wrapper.get('.style-card').trigger('click')
+    await wrapper.get('form').trigger('submit')
+
+    expect(wrapper.get('.results-heading h3').text()).toContain('kolye bulundu')
+    expect(wrapper.findAll('.result-card').length).toBeGreaterThan(0)
+    expect(wrapper.get('.result-card img').attributes('src')).toMatch(
+      /^\/products\/goldium\/.+/,
+    )
+
+    await wrapper.get('.result-card').trigger('click')
+    expect(wrapper.get('.product-detail').text()).toContain('ALVYA seçkisi')
+    expect(wrapper.find('a[href*="goldium.com.tr"]').exists()).toBe(false)
   })
 
   it('keeps budget boundaries and does not show unverified combinations', async () => {
@@ -328,7 +537,7 @@ describe('App', () => {
     expect(wrapper.text()).not.toContain('14 Ayar Altın Mini Kelebek Yüzük')
 
     await wrapper.get('.restart-top').trigger('click')
-    expect(wrapper.findAll('.category-card')).toHaveLength(5)
+    expect(wrapper.findAll('.category-card')).toHaveLength(7)
     await wrapper.get('[data-category-id="ring"]').trigger('click')
     await wrapper.get('[data-ring-collection="minimal"]').trigger('click')
     await wrapper.get('[data-karat="8"]').trigger('click')

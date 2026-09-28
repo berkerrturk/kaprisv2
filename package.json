@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "sync:goldium": "node scripts/sync-goldium-catalog.mjs",
     "build": "vue-tsc -b && vite build",
     "test": "vitest run",
     "lint": "eslint .",
