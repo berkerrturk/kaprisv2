@@ -34,8 +34,23 @@ Bu seçim, ilk web MVP iskeletini düşük karmaşıklıkla çalıştırmak içi
   nesne depolama adresine yönlendirilebilir.
 - Üretimde katalog dosyaları aynı göreli yolları korur. Böylece uygulama kodu ve
   katalog kayıtları yeniden yazılmadan medya sağlayıcısı değiştirilebilir.
-- Kalıcı test yayını öncesinde depolama sağlayıcısı, alan adı, önbellek süresi ve
-  görsel dönüşüm politikası seçilmelidir.
+- Test ortamında görseller Cloudflare Pages statik ağı üzerinden sunulur. Trafik
+  ve katalog büyüdüğünde nesne depolama, özel medya alan adı, önbellek süresi ve
+  görsel dönüşüm politikası ayrıca seçilmelidir.
+
+## Test yayını
+
+- Herkese açık test adresi: `https://alvya-staging.pages.dev/`
+- Cloudflare Pages projesi: `alvya-staging`
+- Yayın dalı: `codex/cloudflare-staging`
+- Pages, doğrulanmış `dist` paketini doğrudan yayınlar; Cloudflare üzerinde ek
+  derleme komutu çalıştırılmaz.
+- Otomatik dağıtım açıktır. Yayın dalına gönderilen yeni commitler aynı test
+  adresine aktarılır.
+- Mevcut yayın Pages ücretsiz sınırları içinde tutulur. Ücretli depolama veya
+  başka bir ücretli Cloudflare özelliği etkinleştirilmemiştir.
+- Yapay zeka uç noktası yayındadır ancak `OPENAI_API_KEY` eklenene kadar arayüz
+  katalog aramasına yönlendiren güvenli yedek mesajı gösterir.
 
 ## Test sipariş akışı
 
